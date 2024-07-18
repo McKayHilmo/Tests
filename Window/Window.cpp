@@ -1,9 +1,24 @@
 #include "Window.h"
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
-    
+
     switch (uMsg)
     {
+    case WM_CREATE:
+        text = CreateWindowEx(
+            0,
+            L"STATIC",
+            L"HELLO",
+            WS_VISIBLE | WS_CHILD | WS_BORDER,
+            50,
+            60,
+            50,
+            25,
+            hWnd,
+            NULL,
+            NULL,
+            NULL);
+        break;
     case WM_CLOSE:
         DestroyWindow(hWnd);
         break;
@@ -13,7 +28,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
     }
 
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
-
+    
 }
 
 Window::Window()

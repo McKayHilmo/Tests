@@ -20,7 +20,6 @@ int main(){
             std::cout << "Closing Window...\n";
             running = false;
         }
-
         //Render
 
         Sleep(10);
