@@ -1,11 +1,33 @@
 #include "Window.h"
+#include <stdint.h>
+#include <iostream>
+#define u32 uint32_t
+
+int width = 0, height = 0;
+void* memory;
+BITMAPINFO bitmap_info;
+HDC hdc;
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
+    
+    RECT rect;
+    GetClientRect(hWnd, &rect);
+    width = rect.right - rect.left;
+    height = rect.bottom - rect.top;
+    memory = VirtualAlloc(0,width * height * 4, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 
+    bitmap_info.bmiHeader.biSize = sizeof(bitmap_info.bmiHeader);
+    bitmap_info.bmiHeader.biWidth = width;
+    bitmap_info.bmiHeader.biHeight = height;
+    bitmap_info.bmiHeader.biPlanes = 1;
+    bitmap_info.bmiHeader.biBitCount = 32;
+    bitmap_info.bmiHeader.biCompression = BI_RGB;
+    hdc = GetDC(hWnd);
+    
     switch (uMsg)
     {
     case WM_CREATE:
-        text = CreateWindowEx(
+        textfield = CreateWindowEx(
             0,
             L"STATIC",
             L"HELLO",
@@ -13,11 +35,35 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
             50,
             60,
             50,
-            25,
+            20,
             hWnd,
             NULL,
             NULL,
             NULL);
+        buttonTest = CreateWindowEx(
+            0,
+            L"BUTTON",
+            L"Fill",
+            WS_VISIBLE | WS_CHILD | WS_BORDER,
+            50,
+            85,
+            50,
+            20,
+            hWnd,
+            (HMENU) 1,
+            NULL,
+            NULL);
+        break;
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+        case 1:
+            ::MessageBox(hWnd,L"Box",L"Button was clicked",0);
+            break;
+        
+        default:
+            break;
+        }
         break;
     case WM_CLOSE:
         DestroyWindow(hWnd);
@@ -25,10 +71,11 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
+    default:
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
 
-    return DefWindowProc(hWnd, uMsg, wParam, lParam);
-    
+    return 0;    
 }
 
 Window::Window()
@@ -95,6 +142,7 @@ bool Window::ProcessMessages(){
         
 
         TranslateMessage(&msg);
+        //Dispatch calls WndowProc
         DispatchMessage(&msg);
     }
 

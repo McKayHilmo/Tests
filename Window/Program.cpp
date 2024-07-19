@@ -1,9 +1,12 @@
-#ifndef UNICODE
+#ifndef UNICODE 
 #define UNICODE
 #endif
 
+
 #include <iostream>
 #include "Window.cpp"
+
+
 
 int main(){
 
@@ -21,7 +24,7 @@ int main(){
             running = false;
         }
         //Render
-
+        StretchDIBits(hdc,0,0,width,height,0,0,width,height,memory,&bitmap_info,DIB_RGB_COLORS,SRCCOPY);
         Sleep(10);
     }
     

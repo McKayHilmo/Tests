@@ -1,7 +1,7 @@
 #include <Windows.h>
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-HWND text;
+HWND textfield, buttonTest;
 
 class Window
 {
