@@ -1,12 +1,11 @@
-#include "Window.h"
-#include <stdint.h>
-#include <iostream>
-#define u32 uint32_t
+#ifndef UNICODE 
+#define UNICODE
+#endif
 
-int width = 0, height = 0;
-void* memory;
-BITMAPINFO bitmap_info;
-HDC hdc;
+
+#include <iostream>
+#include <windows.h>
+
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
     
@@ -25,11 +24,21 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
     return 0;    
 }
+class Window
+{
+private:
+    HINSTANCE  m_hInstance;
+    HWND m_hWnd;
+public:
+    Window();
+    ~Window();
+    bool ProcessMessages();
+};
 
 Window::Window()
     :m_hInstance(GetModuleHandle(nullptr))
 {
-    const wchar_t* CLASS_NAME = L"McKays Window Class";
+    const wchar_t* CLASS_NAME = L"My Class";
     WNDCLASS wndClass = {};
     wndClass.lpszClassName = CLASS_NAME;
     wndClass.hInstance = m_hInstance;
@@ -39,28 +48,17 @@ Window::Window()
 
     RegisterClass(&wndClass);
 
-    DWORD style = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
-
-    int width = 640;
-    int height = 480;
-
-    RECT rect;
-    rect.left = 250;
-    rect.top = 250;
-    rect.right = rect.left + width;
-    rect.bottom = rect.top + height;
-
-    AdjustWindowRect(&rect, style, false);
+    DWORD style = WS_MINIMIZEBOX | WS_SYSMENU | WS_MAXIMIZEBOX;
 
     m_hWnd = CreateWindowEx(
         0,
         CLASS_NAME,
         L"Title",
         style,
-        rect.left,
-        rect.top,
-        rect.right - rect.left,
-        rect.bottom - rect.top,
+        250,
+        250,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
         NULL,
         NULL,
         m_hInstance,
@@ -97,3 +95,29 @@ bool Window::ProcessMessages(){
     
 } 
 
+
+
+
+int main(){
+
+    std::cout << "Creating Window...\n";
+
+    Window* pWindow = new Window();
+
+    bool running = true;
+
+    while (running)
+    {
+        if(!pWindow->ProcessMessages()){
+
+            std::cout << "Closing Window...\n";
+            running = false;
+        }
+        //Render
+        Sleep(10);
+    }
+    
+    delete pWindow;
+
+    return 0;
+}
